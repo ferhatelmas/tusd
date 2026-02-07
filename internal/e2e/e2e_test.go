@@ -25,7 +25,6 @@ import (
 	toxiproxy "github.com/Shopify/toxiproxy/v2/client"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog"
-	"golang.org/x/exp/constraints"
 )
 
 var toxiClient *toxiproxy.Client
@@ -882,7 +881,12 @@ func spawnTusd(ctx context.Context, t *testing.T, args ...string) (endpoint stri
 	panic("unreachable")
 }
 
-func isApprox[N constraints.Integer](got N, expected N, tolerance float64) bool {
+type integer interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+func isApprox[N integer](got N, expected N, tolerance float64) bool {
 	min := float64(expected) * (1 - tolerance)
 	max := float64(expected) * (1 + tolerance)
 
